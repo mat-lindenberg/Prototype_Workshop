@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Vessel
+  - Leaf
+  - Weed
+  - Flower
+  - Grass
+  - Bush
   layers:
   - Default
   - TransparentFX
@@ -15,10 +20,10 @@ TagManager:
   - Buildable
   - 
   - 
+  - Player
   - 
   - 
-  - 
-  - 
+  - Leaf
   - 
   - 
   - 
