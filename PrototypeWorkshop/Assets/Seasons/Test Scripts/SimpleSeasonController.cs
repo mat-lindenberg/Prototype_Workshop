@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SimpleSeasonController : MonoBehaviour
 {
@@ -34,6 +35,21 @@ public class SimpleSeasonController : MonoBehaviour
 
     public seasonToolAnimation tool;
 
+    public Sprite shovelSprite;
+    public Sprite axeSprite;
+    public Sprite waterbucketSprite;
+    public Sprite hoeSprite;
+
+    public enum TOOL_STATES { Shovel, Axe, Hoe, Bucket};
+    public TOOL_STATES selected_tool;
+
+    public Tilemap tilemap;
+
+    public Tile wetDirt;
+    public Tile tilledDirt;
+    public Tile dirt;
+    public Tile plantableDirt;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,13 +60,64 @@ public class SimpleSeasonController : MonoBehaviour
     void Update()
     {
 
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            tool.GetComponent<SpriteRenderer>().sprite = shovelSprite;
+            selected_tool = TOOL_STATES.Shovel;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            tool.GetComponent<SpriteRenderer>().sprite = axeSprite;
+            selected_tool = TOOL_STATES.Axe;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            tool.GetComponent<SpriteRenderer>().sprite = waterbucketSprite;
+            selected_tool = TOOL_STATES.Bucket;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            tool.GetComponent<SpriteRenderer>().sprite = hoeSprite;
+            selected_tool = TOOL_STATES.Hoe;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             
             if (tool.animationTimer <= 0)
             {
                 tool.animationTimer = tool.timeAnimationTakes;
-                DamageInArea();
+
+                if (selected_tool == TOOL_STATES.Axe)
+                {
+                    DamageInArea();
+                }
+                else if (selected_tool == TOOL_STATES.Shovel)
+                {
+                    Vector3 worldPoint = mousePos.transform.position;
+                    var tpos = tilemap.WorldToCell(worldPoint);
+                    Debug.Log(tpos);
+                    tilemap.SetTile(tpos, plantableDirt);
+                    //place planting hole on tile
+                }
+                else if (selected_tool == TOOL_STATES.Hoe)
+                {
+                    Vector3 worldPoint = mousePos.transform.position;
+                    var tpos = tilemap.WorldToCell(worldPoint);
+                    Debug.Log(tpos);
+                    tilemap.SetTile(tpos, tilledDirt);
+                    //turn ground to dirt
+                }
+                else if (selected_tool == TOOL_STATES.Bucket)
+                {
+                    //turn tile wet
+                    Vector3 worldPoint = mousePos.transform.position;
+                    var tpos = tilemap.WorldToCell(worldPoint);
+                    Debug.Log(tpos);
+                    tilemap.SetTile(tpos, wetDirt);
+                }
             }
         }
 
@@ -153,6 +220,11 @@ public class SimpleSeasonController : MonoBehaviour
 
     }
 
+    public void DigTile()
+    {
+
+    }
+
     public void ThrowObject()
     {
         Transform t = handTransform.GetChild(0);
@@ -169,9 +241,32 @@ public class SimpleSeasonController : MonoBehaviour
 
     }
 
+    public void ForceEquipShovel()
+    {
+        tool.GetComponent<SpriteRenderer>().sprite = shovelSprite;
+        selected_tool = TOOL_STATES.Shovel;
+    }
+
+    public void ForceEquipHoe()
+    {
+        tool.GetComponent<SpriteRenderer>().sprite = hoeSprite;
+        selected_tool = TOOL_STATES.Hoe;
+    }
+
+    public void ForceEquipBucket()
+    {
+        tool.GetComponent<SpriteRenderer>().sprite = waterbucketSprite;
+        selected_tool = TOOL_STATES.Bucket;
+    }
+
+    public void ForceEquipAxe()
+    {
+        tool.GetComponent<SpriteRenderer>().sprite = axeSprite;
+        selected_tool = TOOL_STATES.Axe;
+    }
     public void DamageInArea()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, .4f);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, .75f);
 
         for (int i = 0; i < hitColliders.Length; i++)
         {

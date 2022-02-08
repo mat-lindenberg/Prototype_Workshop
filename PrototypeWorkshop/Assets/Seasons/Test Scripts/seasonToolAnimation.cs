@@ -25,16 +25,16 @@ public class seasonToolAnimation : MonoBehaviour
 
             if (animationTimer > timeAnimationTakes/2f)
             {
-                transform.Rotate(0, 0, 1);
+                transform.Rotate(0, 0, -4);
             }
             else
             {
-                transform.Rotate(0, 0, -1);
+                transform.Rotate(0, 0, 4);
             }
 
             if (animationTimer <= 0)
             {
-                transform.rotation = Quaternion.Euler(45, 0, 90);
+                transform.rotation = Quaternion.Euler(45, 0, 0);
             }
         }
     }
