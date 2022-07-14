@@ -10,6 +10,8 @@ TagManager:
   - Flower
   - Grass
   - Bush
+  - Expierience
+  - PlayerBullet
   layers:
   - Default
   - TransparentFX
@@ -24,7 +26,7 @@ TagManager:
   - 
   - 
   - Leaf
-  - 
+  - PlayerBullet
   - 
   - 
   - 
