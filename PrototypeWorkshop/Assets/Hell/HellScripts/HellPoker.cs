@@ -23,6 +23,8 @@ public class HellPoker : MonoBehaviour
 
     bool appliedDamage;
 
+    public float speedMult = 1;
+
     void Start()
     {
         
@@ -37,20 +39,21 @@ public class HellPoker : MonoBehaviour
         {
             if (pokeTimer < timeBetweenPokes)
             {
-                pokeTimer += Time.deltaTime;
+                pokeTimer += Time.deltaTime * speedMult;
             }
             else
             {
                 target = TargetLogic();
                 if (target != null)
                 {
+                    
                     RotatePitchForkToTarget();
                     poking = true;
                     appliedDamage = false;
                 }
                 else
                 {
-                    pokeTimer = 0;
+                   // should we put some sort of timer on here, to keep a million searches from happening?
                 }
             }
         }
@@ -65,7 +68,7 @@ public class HellPoker : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            GetPeopleInRadius();
+            GetPeopleInRadiusNEW();
         }
 
     }
@@ -74,7 +77,7 @@ public class HellPoker : MonoBehaviour
     {
         if (animTimer < timeForAnimationToTake)
         {
-            animTimer += Time.deltaTime;
+            animTimer += Time.deltaTime * speedMult;
 
             Vector3 targetPos = transform.position;
             targetPos += new Vector3(4, 0, 0);
@@ -90,7 +93,7 @@ public class HellPoker : MonoBehaviour
             {
                 if (appliedDamage == false)
                 {
-                    target.GetComponent<HellTestPerson>().TrySlap();
+                    target.GetComponent<HellTestPerson>().Slap();
                     appliedDamage = true;
                 }
             }
@@ -124,12 +127,28 @@ public class HellPoker : MonoBehaviour
     {
         if (peopleInRange.Count > 0)
         {
-            for (int i = 0; i < peopleInRange.Count; i++)
+            if (placeInPeopleArray < peopleInRange.Count)
             {
-                if (peopleInRange[i].cooldownTimer > peopleInRange[i].cooldownAmount)
+                if (peopleInRange[placeInPeopleArray].attackable)
                 {
-                    return peopleInRange[i].transform;
+                    peopleInRange[placeInPeopleArray].Targeted();
+                    return peopleInRange[placeInPeopleArray].transform;
                 }
+                else
+                {
+                    placeInPeopleArray++;
+
+                    if (placeInPeopleArray > peopleInRange.Count)
+                    {
+                        placeInPeopleArray = 0;
+                    }
+
+                    return null;
+                }
+            }
+            else
+            {
+                placeInPeopleArray = 0;
             }
         }
 
@@ -165,11 +184,44 @@ public class HellPoker : MonoBehaviour
 
     public void MessageWhenPickedUp()
     {
-
+        GameObject.Find("Canvas").GetComponent<HellUIManager>().ChangTurnedBaseAnguish(-peopleInRange.Count);
+        peopleInRange.Clear();
+        target = null;
+        poking = false;
+        //shouldn't really be picked up?
     }
 
     public void MessageWhenPlacedDown()
     {
+        //get people in range that are eligible to poke
+        GetPeopleInRadiusNEW();
+    }
 
+
+    public void GetPeopleInRadiusNEW()
+    {
+        Debug.Log("Calling radius decector...");
+        Collider[] cols = Physics.OverlapBox(transform.position, new Vector3(1, 1, 1));
+
+        peopleInRange.Clear();
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            if (cols[i].GetComponent<PeopleSlots>())
+            {
+                Debug.Log(cols[i].gameObject + " has slots");
+                if (cols[i].GetComponent<PeopleSlots>().peopleInMe > 0)
+                {
+                    Debug.Log(cols[i].gameObject + " has people");
+                    for (int j = 0; j < cols[i].GetComponent<PeopleSlots>().peopleInMe; j++)
+                    {
+                        Debug.Log("adding person");
+                        peopleInRange.Add(cols[i].GetComponent<PeopleSlots>().persons[j].GetComponent<HellTestPerson>());
+                    }
+                }
+            }
+        }
+
+        GameObject.Find("Canvas").GetComponent<HellUIManager>().ChangTurnedBaseAnguish(peopleInRange.Count);
     }
 }

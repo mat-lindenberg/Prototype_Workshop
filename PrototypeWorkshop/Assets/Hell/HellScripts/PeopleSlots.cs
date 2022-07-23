@@ -39,5 +39,39 @@ public class PeopleSlots : MonoBehaviour
         g.transform.SetParent(transform);
         g.transform.position = slotPositions[peopleInMe].transform.position;
         peopleInMe++;
+        AddToDemonsNearMe(g);
+        //check demons near me and add if in range
+    }
+
+    public void MessageWhenPickedUp()
+    {
+        Collider[] cols = Physics.OverlapBox(transform.position, new Vector3(1, 1, 1));
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            if (cols[i].GetComponent<HellPoker>())
+            {
+                //cols[i].GetComponent<HellPoker>().peopleInRange.Add(g.GetComponent<HellTestPerson>());
+                GameObject.Find("Canvas").GetComponent<HellUIManager>().ChangTurnedBaseAnguish(-peopleInMe);
+            }
+        }
+    }
+
+
+    public void AddToDemonsNearMe(GameObject g)
+    {
+
+        Collider[] cols = Physics.OverlapBox(transform.position, new Vector3(1, 1, 1));
+
+
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            if (cols[i].GetComponent<HellPoker>())
+            {
+                cols[i].GetComponent<HellPoker>().peopleInRange.Add(g.GetComponent<HellTestPerson>());
+                GameObject.Find("Canvas").GetComponent<HellUIManager>().ChangTurnedBaseAnguish(1);
+            }
+        }
     }
 }

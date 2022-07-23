@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HellGrabbable : MonoBehaviour
 {
+    public bool pickUpAble;
     public bool inHand;
 
     // Start is called before the first frame update
@@ -26,10 +27,9 @@ public class HellGrabbable : MonoBehaviour
     public void WhenPlaceDown()
     {
         
-        if (gameObject.GetComponent<FenceBlock>())
-        {
-            SendMessage("MessageWhenPlacedDown");
-        }
+
+      SendMessage("MessageWhenPlacedDown");
+        
         
     }
 }

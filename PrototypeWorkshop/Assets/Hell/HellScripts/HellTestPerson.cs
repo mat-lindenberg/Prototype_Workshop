@@ -9,36 +9,54 @@ public class HellTestPerson : MonoBehaviour
     public float cooldownTimer;
     public float cooldownAmount = 2f;
 
-    public Color damageColor;
+    public bool attackable;
+
+
 
     void Start()
     {
-        
+        cooldownTimer = cooldownAmount;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (cooldownTimer < cooldownAmount)
+
+
+        if (attackable == false)
         {
-            cooldownTimer += Time.deltaTime;
-            Color c = Color.Lerp(damageColor, Color.white, cooldownTimer / cooldownAmount);
-            transform.GetChild(0).GetComponent<SpriteRenderer>().color = c;
+            if (cooldownTimer < cooldownAmount)
+            {
+                cooldownTimer += Time.deltaTime;
+                //Color c = Color.Lerp(Color.grey, Color.white, cooldownTimer / cooldownAmount+.1f);
+                //transform.GetChild(0).GetComponent<SpriteRenderer>().color = c;
+            }
+            else
+            {
+                cooldownTimer = 0;
+                attackable = true;
+                transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
+        else
+        {
+
+        }
+
     }
 
-
-
-    public void TrySlap()
+    public void Targeted()
     {
-        if (cooldownTimer >= cooldownAmount)
-        {
+        attackable = false;
+    }
+
+    public void Slap()
+    {
+
             cooldownTimer = 0;
             GameObject.Find("Manager").GetComponent<Hellmanager>().AddAnguish(1);
-            transform.GetChild(0).GetComponent<SpriteRenderer>().color = damageColor;
-        }
-
-
+            transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.grey;
+            attackable = false;
     }
 
     public void MessageWhenPickedUp()

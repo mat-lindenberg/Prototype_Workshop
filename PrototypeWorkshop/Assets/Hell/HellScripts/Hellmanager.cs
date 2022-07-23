@@ -8,6 +8,9 @@ public class Hellmanager : MonoBehaviour
     public float Anguish;
     public Text anguishUi;
 
+    public float Housing;
+    public Text housingUi;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,5 +33,17 @@ public class Hellmanager : MonoBehaviour
     {
         Anguish -= f;
         anguishUi.text = Anguish + "";
+    }
+
+    public void AddHousing(float f)
+    {
+        Housing += f;
+        housingUi.text = Housing + "";
+    }
+
+    public void RemoveHousing(float f)
+    {
+        Housing -= f;
+        housingUi.text = Housing + "";
     }
 }

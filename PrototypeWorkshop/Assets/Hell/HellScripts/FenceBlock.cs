@@ -90,6 +90,7 @@ public class FenceBlock : MonoBehaviour
         }
 
 
+
     }
 
     public bool doesTileContainFence(Vector3 position)
